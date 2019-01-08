@@ -7,6 +7,7 @@ from . import serializer
 
 # Create your views here.
 class HelloApiView(APIView):
+    serializer_class = serializer.HelloSerializer
 
     def get(self, request, format=None):
         an_apiview = [
@@ -38,6 +39,9 @@ class HelloApiView(APIView):
         return Response({'method': 'delete'})
 
 class HelloViewSet(viewsets.ViewSet):
+
+    serializer_class = serializer.HelloSerializer
+
     def list(self, request):
         a_viewset = [
             'Uses actions (list, create, retrieve, update, partial_update)',
@@ -46,3 +50,24 @@ class HelloViewSet(viewsets.ViewSet):
         ]
         return Response({'Message': 'Hello ViewSet!',
                          'a_viewset': a_viewset})
+
+    def create(self, request):
+        serializerObj = serializer.HelloSerializer(data=request.data)
+        if serializerObj.is_valid():
+            name = serializerObj.data.get('name')
+            msg = 'Hello {0}'.format(name)
+            return Response({'message':msg})
+        else:
+            return Response(serializerObj.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        return Response({'http_method': 'GET'})
+
+    def update(self, request, pk=None):
+        return Response({'http_method': 'PUT'})
+
+    def partial_update(self, request, pk=None):
+        return Response({'http_method':' PATCH'})
+
+    def destroy(self, request, pk=None):
+        return Response({'http_method': 'DELETE'})
