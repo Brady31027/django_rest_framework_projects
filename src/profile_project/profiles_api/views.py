@@ -90,3 +90,12 @@ class LoginViewSet(viewsets.ViewSet):
     def create(self, request):
         """ this viewset will call built-in apiview to get the auth token """
         return ObtainAuthToken().post(request)
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication, )
+    serializer_class = serializer.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+
+    def perform_create(self, serializer):
+        print(self.request.user)
+        serializer.save(user_profile = self.request.user) # USERNAME_FIELD ??
